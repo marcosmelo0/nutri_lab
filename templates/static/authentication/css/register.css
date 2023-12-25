@@ -1,0 +1,95 @@
+.sidebar{
+    background-color: #95c68f;
+    height: 100vh;
+}
+
+
+.logo_sidebar{
+    text-align: center;
+}
+
+.img_logo_sidebar{
+    width: 100%;
+ 
+
+}
+
+.sidebar{
+
+    background-image: url();
+
+}
+
+.area_cadastrar{
+    margin-top: 8%;
+    margin-left: 15%;
+    width: 70%;
+}
+
+.titulo{
+
+    font-weight: bold;
+
+}
+
+.sub-titulo{
+    color: gray;
+}
+
+.input-form{
+    margin-top: 15px;
+    width: 100%;
+    padding: 5px;
+    outline: 0;
+
+}
+
+.input-form:focus{
+
+    border: 2px solid #95c68f !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+
+}
+
+.bold{
+    font-weight: bold;
+}
+
+
+
+.btn{
+    position: relative;
+    display: block;
+    color: white;
+    font-size: 14px;
+    font-family: "montserrat";
+    font-weight: bold;
+    margin: 30px 0;
+    border: 2px solid #95c68f;
+    padding: 14px 60px;
+    text-transform: uppercase;
+    overflow: hidden;
+    transition: 1s all ease;
+  }
+
+
+  .btn::before{
+    background: #95c68f;
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    z-index: -1;
+    transition: all 0.6s ease;
+  }
+
+  .btn1::before{
+    width: 0%;
+    height: 100%;
+  }
+  
+  .btn1:hover::before{
+    width: 100%;
+  }
