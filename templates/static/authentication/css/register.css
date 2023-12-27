@@ -1,5 +1,5 @@
 .sidebar{
-    background-color: #95c68f;
+    background-color: #002c2b;
     height: 100vh;
 }
 
@@ -16,7 +16,7 @@
 
 .sidebar{
 
-    background-image: url();
+    background-image: url('../img/fundo_background.png');
 
 }
 
