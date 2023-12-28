@@ -1,9 +1,10 @@
+from datetime import datetime
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
-from django.shortcuts import redirect, render
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 from django.contrib.messages import constants
-from .models import Patient
+from .models import DataPatient, Patient
 
 
 @login_required(login_url='/auth/login')
@@ -42,3 +43,49 @@ def patient(request):
             return redirect('/patients/')
 
     return HttpResponse(f"{name}, {sex}, {age}, {email}, {telephone}")
+
+
+@login_required(login_url='/auth/logar/')
+def patient_data_list(request):
+    if request.method == "GET":
+        patients = Patient.objects.filter(nutri=request.user)
+        return render(request, 'patients_data_list.html', {'patients': patients})
+
+
+@login_required(login_url='/auth/login/')
+def patient_data(request, id):
+    patient = get_object_or_404(Patient, id=id)
+    if not patient.nutri == request.user:
+        messages.add_message(request, constants.ERROR, 'Esse paciente não é seu')
+        return redirect('/patient-data/')
+        
+    if request.method == "GET":
+        data_patient = DataPatient.objects.filter(paciente=patient)
+        return render(request, 'patient_data.html', {'patient': patient, 'data_patient': data_patient})
+    elif request.method == "POST":
+        peso = request.POST.get('peso')
+        altura = request.POST.get('altura')
+        gordura = request.POST.get('gordura')
+        musculo = request.POST.get('musculo')
+
+        hdl = request.POST.get('hdl')
+        ldl = request.POST.get('ldl')
+        colesterol_total = request.POST.get('ctotal')
+        triglicerídios = request.POST.get('triglicerídios')
+
+        patient = DataPatient(paciente=patient,
+                        data=datetime.now(),
+                        peso=peso,
+                        altura=altura,
+                        percentual_gordura=gordura,
+                        percentual_musculo=musculo,
+                        colesterol_hdl=hdl,
+                        colesterol_ldl=ldl,
+                        colesterol_total=colesterol_total,
+                        trigliceridios=triglicerídios)
+
+        patient.save()
+
+        messages.add_message(request, constants.SUCCESS, 'Dados cadastrado com sucesso')
+
+        return HttpResponseRedirect(request.path_info)

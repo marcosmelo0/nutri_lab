@@ -13,3 +13,19 @@ class Patient(models.Model):
 
     def __str__(self):
         return f"{self.name}"
+
+
+class DataPatient(models.Model):
+    paciente = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    data = models.DateTimeField()
+    peso = models.IntegerField()
+    altura = models.IntegerField()
+    percentual_gordura = models.IntegerField()
+    percentual_musculo = models.IntegerField()
+    colesterol_hdl = models.IntegerField()
+    colesterol_ldl = models.IntegerField()
+    colesterol_total = models.IntegerField()
+    trigliceridios = models.IntegerField()
+
+    def __str__(self):
+        return f"Paciente({self.paciente.name}, {self.peso})"
