@@ -9,7 +9,8 @@ from .models import Patient
 @login_required(login_url='/auth/login')
 def patient(request):
     if request.method == "GET":
-        return render(request, 'patients.html')
+        patients = Patient.objects.filter(nutri=request.user)
+        return render(request, 'patients.html', {'patients': patients})
     elif request.method == "POST":
         name = request.POST.get('name')
         sex = request.POST.get('sex')
@@ -40,4 +41,4 @@ def patient(request):
             messages.add_message(request, constants.ERROR, 'Erro interno do sistema')
             return redirect('/patients/')
 
-        return HttpResponse(f"{name}, {sex}, {age}, {email}, {telephone}")
+    return HttpResponse(f"{name}, {sex}, {age}, {email}, {telephone}")
