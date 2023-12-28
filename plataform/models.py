@@ -2,8 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-class Patients(models.Model):
-    choices_sex = (('F', 'Feminino'), ('M', 'Maculino'))
+class Patient(models.Model):
+    choices_sex = (('F', 'Feminino'), ('M', 'Masculino'))
     name = models.CharField(max_length=50)
     sex = models.CharField(max_length=1, choices=choices_sex)
     age = models.IntegerField()
