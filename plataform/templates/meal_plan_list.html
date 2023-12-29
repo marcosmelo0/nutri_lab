@@ -12,14 +12,13 @@
         {% endfor %}
     {% endif %}
     <br>
-		<h1 class="titulo">Escolha o paciente</h1>
-    <div style="display: flex; gap: 20px;" class="row">
+	<h1 class="titulo">Escolha o paciente</h1>
+    <div  class="row">
         {% for patient in patients%}
-            <div style="widht: auto">
-                <a href="{% url 'patient-data' patient.id %}" class="link-hover">
+            <div class="col-md-4">
+                <a href="{% url 'meal-plan' patient.id %}" class="link-hover">
                     <div class="card-paciente">
                         <div class="foto-perfil">
-                           
                             {% if patient.sex == "M"%}
                                 <img src="{% static 'plataform/img/perfil2.png' %}">
                             {% else %}

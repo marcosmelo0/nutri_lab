@@ -3,6 +3,7 @@
 {% load static %} 
 {% block 'head' %}
     <link rel="stylesheet" href="{% static 'plataform/css/plataform.css' %}" />
+    <link rel="stylesheet" href="{% static 'plataform/css/meal_plan.css' %}">
 {% endblock %}
 
 <div class="container-fluid">
@@ -28,7 +29,7 @@
         </div>
       </a>
 
-      <a href="#" class="link-lateral">
+      <a href="{% url 'meal-plan-list' %}" class="link-lateral">
         <div class="card-lateral">
           <img src="{% static 'plataform/img/plano_alimentar.png' %}" />
           <br />

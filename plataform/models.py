@@ -16,7 +16,7 @@ class Patient(models.Model):
 
 
 class DataPatient(models.Model):
-    paciente = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     data = models.DateTimeField()
     peso = models.IntegerField()
     altura = models.IntegerField()
@@ -28,4 +28,25 @@ class DataPatient(models.Model):
     trigliceridios = models.IntegerField()
 
     def __str__(self):
-        return f"Paciente({self.paciente.name}, {self.peso})"
+        return f"Paciente({self.patient.name}, {self.peso})"
+
+
+class Snack(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    titulo = models.CharField(max_length=50)
+    horario = models.TimeField()
+    carboidratos = models.IntegerField()
+    proteinas = models.IntegerField()
+    gorduras = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.titulo}"
+
+
+class Option(models.Model):
+    snack = models.ForeignKey(Snack, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to="option")
+    description = models.TextField()
+
+    def __str__(self):
+        return f"{self.description}"

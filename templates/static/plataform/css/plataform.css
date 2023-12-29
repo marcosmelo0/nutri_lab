@@ -33,7 +33,9 @@
 }
 
 .card-paciente{
-
+    display: flex;
+    flex-direction: column;
+    min-width: 280px;
     background-color: #EAEAEA;
     box-shadow: 3px 3px 3px gray;
     padding: 20px;
@@ -57,6 +59,18 @@
 
     margin-left: -12%;
 
+}
+
+@media (max-width: 767px) {
+    .row {
+        justify-content: center;
+    }
+}
+
+@media (min-width: 767px) {
+    .card-paciente {
+        margin-left: 15px;
+    }
 }
 
 @media (max-width: 1300px)

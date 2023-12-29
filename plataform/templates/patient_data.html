@@ -16,7 +16,11 @@
     <div class="row">
 
         <div class="col-md-3">
-            <img src="{% static 'plataform/img/perfil1.png' %}">
+             {% if patient.sex == "M"%}
+                    <img src="{% static 'plataform/img/perfil2.png' %}">
+                {% else %}
+                    <img src="{% static 'plataform/img/perfil1.png' %}">
+            {% endif %}
         </div>
 
         <div class="col-md-3 dados descricao">
@@ -53,6 +57,46 @@
             {% endfor %}
         </tbody>
     </table>
+    <div style="width: 60%;">
+        <canvas canvas id="myChart"></canvas>
+    </div>  
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+
+        fetch("/chart-weight/{{patient.id}}/",{
+            method: 'POST',
+        }).then(function(result){
+            return result.json()
+        }).then(function(data_patient){
+        
+            const data = {
+                labels: data_patient['labels'],
+                datasets: [{
+                label: 'Peso paciente',
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(255, 99, 132)',
+                data: data_patient['peso'],
+                }]
+            };
+
+            const config = {
+                type: 'bar',
+                data: data,
+                options: {}
+            };
+
+            const myChart = new Chart(
+                document.getElementById('myChart'),
+                config
+            );
+
+
+        })
+
+
+
+    </script>
     <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">

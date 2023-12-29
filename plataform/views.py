@@ -1,10 +1,11 @@
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 from django.contrib.messages import constants
-from .models import DataPatient, Patient
+from .models import DataPatient, Option, Patient, Snack
+from django.views.decorators.csrf import csrf_exempt
 
 
 @login_required(login_url='/auth/login')
@@ -36,7 +37,7 @@ def patient(request):
             patient = Patient(name=name, sex=sex, age=age, email=email, telephone=telephone, nutri=request.user)
 
             patient.save()
-            messages.add_message(request, constants.SUCCESS, 'Paciênte cadastrado com sucesso')
+            messages.add_message(request, constants.SUCCESS, 'Paciente cadastrado com sucesso')
             return redirect('/patients/')
         except:
             messages.add_message(request, constants.ERROR, 'Erro interno do sistema')
@@ -54,14 +55,13 @@ def patient_data_list(request):
 
 @login_required(login_url='/auth/login/')
 def patient_data(request, id):
-    patient = get_object_or_404(Patient, id=id)
-    if not patient.nutri == request.user:
+    patients = get_object_or_404(Patient, id=id)
+    if not patients.nutri == request.user:
         messages.add_message(request, constants.ERROR, 'Esse paciente não é seu')
-        return redirect('/patient-data/')
-        
+        return redirect('/patient-data/')        
     if request.method == "GET":
-        data_patient = DataPatient.objects.filter(paciente=patient)
-        return render(request, 'patient_data.html', {'patient': patient, 'data_patient': data_patient})
+        data_patient = DataPatient.objects.filter(patient=patients)
+        return render(request, 'patient_data.html', {'patient': patients, 'data_patient': data_patient})
     elif request.method == "POST":
         peso = request.POST.get('peso')
         altura = request.POST.get('altura')
@@ -73,7 +73,7 @@ def patient_data(request, id):
         colesterol_total = request.POST.get('ctotal')
         triglicerídios = request.POST.get('triglicerídios')
 
-        patient = DataPatient(paciente=patient,
+        patients = DataPatient(patient=patients,
                         data=datetime.now(),
                         peso=peso,
                         altura=altura,
@@ -84,8 +84,81 @@ def patient_data(request, id):
                         colesterol_total=colesterol_total,
                         trigliceridios=triglicerídios)
 
-        patient.save()
+        patients.save()
 
         messages.add_message(request, constants.SUCCESS, 'Dados cadastrado com sucesso')
 
         return HttpResponseRedirect(request.path_info)
+
+
+@login_required(login_url='/auth/login/')
+@csrf_exempt
+def chart_weight(request, id):
+    patient = Patient.objects.get(id=id)
+    datas = DataPatient.objects.filter(patient=patient).order_by("data")
+    
+    pesos = [dado.peso for dado in datas]
+    labels = list(range(len(pesos)))
+    data = {'peso': pesos,
+            'labels': labels}
+    return JsonResponse(data)
+
+
+def meal_plan_list(request):
+    if request.method == "GET":
+        patients = Patient.objects.filter(nutri=request.user)
+        return render(request, 'meal_plan_list.html', {'patients': patients})
+
+
+def meal_plan(request, id):
+    patients = get_object_or_404(Patient, id=id)
+    if not patients.nutri == request.user:
+        messages.add_message(request, constants.ERROR, 'Esse paciente não é seu')
+        return redirect('/patient-data/')
+
+    if request.method == "GET":
+        snack1 = Snack.objects.filter(patient=patients).order_by('horario')
+        option = Option.objects.all()
+        return render(request, 'meal_plan.html', {'patient': patients, 'snack': snack1, 'option': option})
+
+
+def snack(request, id_patient):
+    patients = get_object_or_404(Patient, id=id_patient)
+    if not patients.nutri == request.user:
+        messages.add_message(request, constants.ERROR, 'Esse paciente não é seu')
+        return redirect('/data-patient/')
+
+    if request.method == "POST":
+        titulo = request.POST.get('titulo')
+        horario = request.POST.get('horario')
+        carboidratos = request.POST.get('carboidratos')
+        proteinas = request.POST.get('proteinas')
+        gorduras = request.POST.get('gorduras')
+
+        snack1 = Snack(patient=patients,
+                      titulo=titulo,
+                      horario=horario,
+                      carboidratos=carboidratos,
+                      proteinas=proteinas,
+                      gorduras=gorduras)
+
+        snack1.save()
+
+        messages.add_message(request, constants.SUCCESS, 'Refeição cadastrada')
+        return redirect(f'/meal-plan/{id_patient}')
+
+
+def option(request, id_patient):
+    if request.method == "POST":
+        id_snack = request.POST.get('snack')
+        image = request.FILES.get('image')
+        description = request.POST.get("description")
+
+        o1 = Option(snack_id=id_snack,
+                   image=image,
+                   description=description)
+
+        o1.save()
+
+        messages.add_message(request, constants.SUCCESS, 'Opção cadastrada')
+        return redirect(f'/meal-plan/{id_patient}')
