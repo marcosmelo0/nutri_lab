@@ -35,11 +35,12 @@ def register(request):
             activation.save()
 
             path_template = os.path.join(settings.BASE_DIR, 'authentication/templates/emails/confirm_register.html')
-            send_email_html(path_template, 'Cadastro Confirmado!', [email,], username=username, link_ativacao=f"127.0.0.1:8000/auth/active_account/{token}")
-            messages.add_message(request, constants.SUCCESS, 'Registrado com sucesso!')
+            send_email_html(path_template, 'Cadastro Confirmado!', [email,], username=username, link_ativacao=f"http://127.0.0.1:8000/auth/active_account/{token}")
+            messages.add_message(request, constants.SUCCESS, 'Registrado com sucesso, enviamos um e-mail de confirmação para ativar sua conta. Verique o seu e-mail cadastrado!')
 
             return redirect('/auth/login')
         except:
+
             return redirect('/auth/register')
 
 
@@ -59,7 +60,7 @@ def login(request):
             return redirect('/auth/login')
         else:
             auth.login(request, usuario)
-            return redirect('/')
+            return redirect('/patients')
 
 
 def logout(request):
@@ -70,7 +71,7 @@ def logout(request):
 def active_account(request, token):
     token = get_object_or_404(Activation, token=token)
     if token.active:
-        messages.add_message(request, constants.WARNING, 'Essa token já foi usado')
+        messages.add_message(request, constants.WARNING, 'Essa token já foi usada')
         return redirect('/auth/login')
     user = User.objects.get(username=token.user.username)
     user.is_active = True
