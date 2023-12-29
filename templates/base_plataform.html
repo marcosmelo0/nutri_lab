@@ -3,11 +3,13 @@
 {% load static %} 
 {% block 'head' %}
     <link rel="stylesheet" href="{% static 'plataform/css/plataform.css' %}" />
+    <link rel="stylesheet" href="{% static 'plataform/css/meal_plan.css' %}">
 {% endblock %}
+
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-3">
-      <a href="{% url 'patients' %}" class="link-lateral">
+      <a href="{% url 'patient' %}" class="link-lateral">
         <div class="card-lateral">
           <img src="{% static 'plataform/img/paciente.png' %}" />
           <br />
@@ -17,7 +19,7 @@
         </div>
       </a>
 
-      <a href="#" class="link-lateral">
+      <a href="{% url 'patient_data_list' %}" class="link-lateral">
         <div class="card-lateral">
           <img src="{% static 'plataform/img/dados_paciente.png' %}" />
           <br />
@@ -27,7 +29,7 @@
         </div>
       </a>
 
-      <a href="#" class="link-lateral">
+      <a href="{% url 'meal-plan-list' %}" class="link-lateral">
         <div class="card-lateral">
           <img src="{% static 'plataform/img/plano_alimentar.png' %}" />
           <br />

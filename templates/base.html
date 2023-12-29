@@ -18,21 +18,12 @@
   <body>
     {% if user.is_authenticated %}
     <nav
-      style="background-color: #002c2b"
+      style="background-color: #002c2b; display: flex; justify-content: space-between;"
       class="navbar navbar-expand-lg navbar-dark"
     >
       <a style="font-weight: bold" class="navbar-brand" href="#">NUTRI LAB</a>
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarNav"
-        aria-controls="navbarNav"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
+      
+      <a type="button" href="/auth/logout" style="margin-right: 10px; background-color: white; text-decoration: none; border-radius: 5px; padding: 5px 10px; color: red;">SAIR</a>
     </nav>
     {% endif %} {% block 'body' %}{% endblock %}
 
