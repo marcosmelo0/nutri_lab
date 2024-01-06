@@ -32,15 +32,36 @@
 
 }
 
+.btn-card {
+    width: 100%;
+    display: flex;
+    position: relative;
+    justify-content: flex-end;
+    bottom: 5px;
+    margin-left: 7px;
+    gap: 15px;
+    z-index: 1;
+}
+
+.btn-edit {
+    cursor: pointer;
+}
+.btn-edit:hover, .btn-delete:hover {
+    border: 9px solid white;
+    transition: all 1s;
+}
 .card-paciente{
     display: flex;
     flex-direction: column;
-    min-width: 280px;
-    background-color: #EAEAEA;
-    box-shadow: 3px 3px 3px gray;
+    min-width: 350px;
+    background-color: white;
+    box-shadow: 2px 4px 4px 2px gray;
     padding: 20px;
     color: black;
 
+}
+#btn-delete {
+    cursor: pointer;
 }
 
 .link-hover:hover{
@@ -63,8 +84,18 @@
 
 @media (max-width: 767px) {
     .row {
-        justify-content: center;
+        justify-content: start;
     }
+
+    .container-patient {
+        width: 100%;
+    }
+    .card-paciente {
+        min-width: 250px;
+        width: 90%;
+        margin: 0 auto;
+    }
+    
 }
 
 @media (min-width: 767px) {

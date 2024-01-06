@@ -8,7 +8,7 @@ from . import views
 
 urlpatterns = [
     path('patients/', views.patient, name="patient"),
-    path('patient-data-list/', views.patient_data_list, name="patient_data_list"),
+    path('patient-data-list/', views.patient_data_list, name="patient-data-list"),
     path('patient-data/<str:id>/', views.patient_data, name="patient-data"),
     path('chart-weight/<str:id>/', views.chart_weight, name="chart-weight"),
     path('meal-plan-list/', views.meal_plan_list, name="meal-plan-list"),
@@ -16,6 +16,8 @@ urlpatterns = [
     path('snack/<str:id_patient>/', views.snack, name="snack"),
     path('option/<str:id_patient>/', views.option, name="option"),
     path('', RedirectView.as_view(url='patients/', permanent=False)),
+    path('delete-patient/<int:pk>/', views.delete_patient, name='delete-patient'),
+    path('edit-patient/<int:pk>/', views.edit_patient, name='edit-patient'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -57,30 +57,90 @@
                         </div>
                     </form>
                     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-                    <script>
-                        $(document).ready(function () {
-                             $("#sex-select").change(function () {
-                                let selectedSex = $(this).val();
-                                let profileImage = $("#profile-image");
-
-                                let basePath = profileImage.data("gender-path")
-                                let profileImageSrc = basePath + '/perfil' + (selectedSex.toLowerCase() === 'm' ? '2' : '1')+ '.png';
-
-                                profileImage.attr("src", profileImageSrc);
-                            });
-                        });
-                    </script>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+     <div class="modal fade" id="modal-edit-patient" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Editar paciente</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-form" method="POST" {% csrf_token %}
+                        <p type="hidden">{{patient.id}}</p>
+                        <input type="hidden" name="_method" value="patch">
+                        <div class="row">
+                            <div class="col-md-3">
+                               <img id="profile-image" src="{% static 'plataform/img/perfil2.png' %}" data-gender-path="{% static 'plataform/img' %}" data-gender="{{ patient.sex|lower }}">
+                            </div>
+                            <div class="col-md-9">
+                                <label>Nome:</label>
+                                <input id="edit-name" type="text" placeholder="Digite o nome do paciente..." class="form-control" name="name" >
+                            </div>
+                        </div>
+                        <br>
+                        <label>Idade:</label>
+                        <input id="edit-age" type="number" placeholder="0" class="form-control" name="age">
+                        <br>
+                        <label>E-mail:</label>
+                        <input id="edit-email" type="email" placeholder="exemple@email.com" class="form-control" name="email">   
+                        <br>
+                        <label>Telefone:</label>
+                        <input id="edit-tel" type="text" placeholder="(00) 0 0000-0000" class="form-control" name="telephone">
+                        <br>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary btn-lg" data-dismiss="modal">Fechar</button>
+                            <input id="btn-edit-patient" type="button" class="btn btn-success btn-lg" value="Editar">
+                        </div>
+                    </form>
+                    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modal-delete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Excluir Paciente</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h2>Deseja realmente excluir o paciente <span style="color: red;" id="patientName"></span>?</h2>
+                    <div style="display: flex; gap: 15px; width: 100%; margin: 15px 0;">
+                        <button style="width: 50%;" type="button" class="btn btn-secondary btn-lg" data-dismiss="modal">Cancelar</button>
+                        <input id="btn-delet" style="width: 50%;" class="btn btn-danger btn-lg" value="Excluir">
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <br>
     <br>
-    <div style="display: flex; gap: 20px;" class="row">
+    <div style="display: flex;" class="row">
         {% for patient in patients%}
-            <div style=" width: auto;">
-                <a href="#" class="link-hover">
+            <div class="container-patient">
+                
+                <p href="{% url 'patient-data' patient.id %}" class="link-hover">
                     <div class="card-paciente">
+                        <div class="btn-card">
+                            <div id="btn-edit" data-toggle="modal" data-target="#modal-edit-patient" data-patient-id="{{ patient.id }}" data-patient-name="{{patient.name}}" data-patient-age="{{patient.age}}" data-patient-telephone="{{patient.telephone}}" data-patient-email="{{patient.email}}" data-patient-sex="{{patient.sex}}" onclick="editPatient(this)">
+                                <span class="btn-edit"> <i style="font-size: 1.1rem; border-radius: 5px; background-color: #002c2b; padding: 10px; color: white;" class="fa-solid fa-user-pen"></i></span>
+                                
+                            </div>
+                            <div id="btn-delete" data-toggle="modal" data-target="#modal-delete" data-patient-id="{{ patient.id }}" data-patient-name="{{patient.name}}" onclick="deletePatient(this)">
+                                <span class="btn-delete"><i style="font-size: 1.1rem; border-radius: 5px; background-color: red; padding: 10px; color: white;" class="fa-solid fa-user-minus"></i></span>
+                            </div>
+                        </div>
                         <div class="foto-perfil">
                             {% if patient.sex == "M"%}
                                 <img src="{% static 'plataform/img/perfil2.png' %}">
@@ -89,14 +149,68 @@
                             {% endif %}
                         </div>
                         <br>
-                        <p class="dados">{{patient.name}}</p>
-                        <p class="dados">{{patient.age}} Anos</p>
-                        <p class="dados">{{patient.email}}</p>
+                        <p class="dados">Nome: {{patient.name}}</p>
+                        <p class="dados">idade: {{patient.age}} Anos</p>
+                        <p class="dados">E-mail: {{patient.email}}</p>
                     </div>
-                </a>
+                </p>
             </div>
         {% endfor %}
     </div>
+    <script>
+        $(document).ready(function () {
+                $("#sex-select").change(function () {
+                let selectedSex = $(this).val();
+                let profileImage = $("#profile-image");
+
+                let basePath = profileImage.data("gender-path")
+                let profileImageSrc = basePath + '/perfil' + (selectedSex.toLowerCase() === 'm' ? '2' : '1')+ '.png';
+
+                profileImage.attr("src", profileImageSrc);
+            });
+
+        });
+        function deletePatient(element) {
+            let btnDelete = document.getElementById("btn-delet")
+            let patientName = element.getAttribute('data-patient-name')
+            let spanModal = document.getElementById('patientName')
+            let patientId = element.getAttribute('data-patient-id');
+            spanModal.textContent = patientName
+
+            btnDelete.onclick = () => {
+                window.location.href = '/delete-patient/' + patientId + '/' 
+            }
+        }
+        function editPatient(element) {
+            let patientId = element.getAttribute('data-patient-id');
+            let btnEditPatient = document.getElementById("btn-edit-patient")
+
+            let inputName = document.getElementById("edit-name")
+            let inputAge = document.getElementById("edit-age")
+            let inputEmail = document.getElementById("edit-email")
+            let inputTelephone = document.getElementById("edit-tel")
+
+            let patientName = element.getAttribute('data-patient-name')
+            let patientAge = element.getAttribute('data-patient-age')
+            let patientEmail = element.getAttribute('data-patient-email')
+            let patientTelephone = element.getAttribute('data-patient-telephone')
+
+
+            inputName.value = patientName
+            inputAge.value = patientAge
+            inputEmail.value = patientEmail
+            inputTelephone.value = patientTelephone
+
+            btnEditPatient.onclick = () => {
+                let editUrl = '/edit-patient/' + patientId + '/';
+                document.getElementById("edit-form").action = editUrl;
+                document.getElementById("edit-form").submit();
+            }
+        }
+
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
    
 
 {% endblock 'plataform' %}

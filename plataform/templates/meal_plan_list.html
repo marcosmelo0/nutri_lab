@@ -12,10 +12,10 @@
         {% endfor %}
     {% endif %}
     <br>
-	<h1 class="titulo">Escolha o paciente</h1>
-    <div  class="row">
+	<h1 style="margin-bottom: 20px;" class="titulo">Escolha o paciente</h1>
+    <div style="display: flex; gap: 30px;" class="row">
         {% for patient in patients%}
-            <div class="col-md-4">
+            <div class="container-patient">
                 <a href="{% url 'meal-plan' patient.id %}" class="link-hover">
                     <div class="card-paciente">
                         <div class="foto-perfil">
