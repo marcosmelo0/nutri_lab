@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 from django.contrib.messages import constants
@@ -162,3 +162,52 @@ def option(request, id_patient):
 
         messages.add_message(request, constants.SUCCESS, 'Opção cadastrada')
         return redirect(f'/meal-plan/{id_patient}')
+
+
+@login_required(login_url='/auth/login/')
+def delete_patient(request, pk):
+    patient = get_object_or_404(Patient, pk=pk) 
+    if 'HTTP_REFERER' in request.META:
+        previous_page = request.META['HTTP_REFERER']
+        patient.delete()
+        messages.add_message(request, constants.SUCCESS, 'Paciente deletado!')
+        return redirect(previous_page)
+    return redirect(f"{request.path}")
+
+
+
+
+@login_required(login_url='/auth/login/')
+@csrf_exempt
+def edit_patient(request, pk):
+    patient = get_object_or_404(Patient, pk=pk)
+
+    if request.method == 'POST':
+        if request.POST.get('_method') == 'patch':
+            name = request.POST.get('name')
+            age = request.POST.get('age')
+            email = request.POST.get('email')
+            telephone = request.POST.get('telephone')
+
+            try:
+                # Atribui os novos valores ao paciente
+                patient.name = name
+                patient.age = age
+                patient.email = email
+                patient.telephone = telephone
+
+                # Salva as alterações no banco de dados
+                patient.save()
+
+                messages.add_message(request, constants.SUCCESS, 'Paciente editado com sucesso!')
+                return redirect('/patients/')
+            except Exception as e:
+                print(e)
+                messages.add_message(request, constants.ERROR, 'Erro interno do sistema')
+                return redirect('/patients/')
+        else:
+            # Retorna um erro se o método HTTP não for suportado
+            return HttpResponseBadRequest('Método HTTP não suportado')
+
+    # Se não for uma requisição POST, renderize a página de edição
+    return render(request, 'patients.html', {'patient': patient})
